@@ -6,7 +6,11 @@ import br.com.concrete.mock.generic.model.ExternalApiResult;
 import br.com.concrete.mock.generic.model.Request;
 import br.com.concrete.mock.infra.model.UriConfiguration;
 import br.com.concrete.mock.infra.property.ApiProperty;
+
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +60,19 @@ public class ExternalApi {
         request.getBody().ifPresent(LOGGER::info);
         httpHeaders.ifPresent(list -> LOGGER.info(list.toString()));
 
-        final HttpEntity<String> entity = httpHeaders
+        String magicalHeaders = apiProperty.getMagicalHeaders();
+        String[] split = magicalHeaders.split(",");
+        HttpHeaders httpHeadersFiltrado = new HttpHeaders();
+
+        for (String s : split) {
+            if (httpHeaders.get().containsKey(s)) {
+                httpHeadersFiltrado.add(s, String.valueOf(httpHeaders.get().get(s)));
+            }
+        }
+
+        Optional<HttpHeaders> optionalHttpHeaders = Optional.ofNullable(httpHeadersFiltrado);
+
+        final HttpEntity<String> entity = optionalHttpHeaders
                 .map(headers -> request.getBody().map(body -> new HttpEntity<>(body, headers))
                         .orElse(new HttpEntity<>(headers)))
                 .orElse(request.getBody().map(HttpEntity<String>::new).orElse(new HttpEntity<>((String) null)));
@@ -68,6 +84,7 @@ public class ExternalApi {
                 .concat(parameters);
 
         LOGGER.info("URL => {}", url);
+
         final ResponseEntity<String> apiResult = restTemplate.exchange(url, HttpMethod.valueOf(request.getMethod().name().toUpperCase()), entity,
                 String.class);
         return Optional.of(new ExternalApiResult(apiResult, uriConfiguration));
