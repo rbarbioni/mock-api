@@ -39,10 +39,10 @@ api:
 # Paths of json
 file:
   # Look for this path to find json with a request
-  base: "C:\\Gradle"
+  base: "${MOCK_API_FILE_BASE}"
   extension: ".json"
   # Save request (cache) in this path
-  backup.path: "C:\\Gradle"
+  backup.path: "${MOCK_BACKUP_FILE_BASE}"
 
 # Initialize app in capture mode. All requests will be saved
 captureState: true
