@@ -139,7 +139,7 @@ The response will not found at mock files and then, the external host will be ca
 ## TODO
 
 - [X] Fix code Style
-- [ ] Create an example of a property file
+- [x] Create an example of a property file
 - [ ] Split unit from integrated tests
 - [ ] Fix skipping tests
 - [ ] Review dependencies (check, for instance, if it's even necessary to have both GSON and modelmapper dependencies)
